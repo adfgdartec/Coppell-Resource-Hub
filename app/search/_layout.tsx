@@ -6,7 +6,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
-  anchor: 'index',
+  anchor: 'page',
 };
 
 export default function RootLayout() {
@@ -15,9 +15,8 @@ export default function RootLayout() {
   return (
     <Stack>
   
-      <Stack.Screen name = "index" options = {{headerShown: false}} />
-      <Stack.Screen name = "resource/[id]" options = {{headerShown: false}} />
-      <Stack.Screen name = "search" options = {{headerShown: false}} />
+      <Stack.Screen name = "page" options = {{headerShown: false}} />
+
 
     </Stack>
   );

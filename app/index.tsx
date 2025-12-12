@@ -1,382 +1,322 @@
-import React, { useRef, useState } from "react";
-import {
-  Animated,
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-  Pressable,
-  Platform,
+"use client"
 
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react"
+import { View, Text, ScrollView, TouchableOpacity, Dimensions, StyleSheet, SafeAreaView } from "react-native"
 
-const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
-const CARD_WIDTH = Math.min(920, Math.max(360, SCREEN_W * 0.58));
-const CARD_HEIGHT = Math.min(520, Math.max(260, SCREEN_H * 0.56));
-const SPACING = 10;
+const { width, height } = Dimensions.get("window")
+const isSmallScreen = width < 500
 
-const events = [
+const RESOURCES = [
   {
-    title: "STEM Tutoring Program",
-    desc: "Volunteer as a tutor helping high school students with math & science.",
-    location: "Coppell Library",
-    time: "Weekdays, 4–6 PM",
-    people: "18 Participants",
-    tags: ["STEM", "Volunteering"],
+    id: 1,
+    title: "Job Opportunities",
+    description: "Find local career openings and professional development",
+    icon: "",
   },
   {
-    title: "Youth Leadership Workshop",
-    desc: "Interactive workshop developing leadership skills.",
-    location: "Community Center, Downtown",
-    time: "Saturdays, 2–4 PM",
-    people: "24 Participants",
-    tags: ["Leadership", "Community Work"],
+    id: 2,
+    title: "Education & Training",
+    description: "Access courses, workshops, and skill-building programs",
+    icon: "",
   },
   {
-    title: "Robotics Club",
-    desc: "Join us for hands-on robotics and coding.",
-    location: "Tech Building A",
-    time: "Thursdays, 5–7 PM",
-    people: "12 Participants",
-    tags: ["Robotics", "Coding"],
+    id: 3,
+    title: "Community Events",
+    description: "Discover local events, meetups, and social gatherings",
+    icon: "",
   },
-];
+  {
+    id: 4,
+    title: "Health & Wellness",
+    description: "Find fitness, mental health, and medical services nearby",
+    icon: "",
+  },
+  {
+    id: 5,
+    title: "Business Support",
+    description: "Connect with local entrepreneurs and business resources",
+    icon: "🚀",
+  },
+  {
+    id: 6,
+    title: "Community Groups",
+    description: "Join clubs, hobby groups, and community organizations",
+    icon: "👥",
+  },
+]
 
-export default function HomeScreen() {
+const App = () => {
+  const [currentStep, setCurrentStep] = useState(1)
+
+  const steps = ["Welcome", "Preferences", "Rate"]
+
   return (
-    <LinearGradient colors={["#0D0F12", "#000000"]} style={styles.background}>
-      <ScrollView>
-          <View style = {styles.space}/>
-          <View style = {styles.curateView}>
-            <Pressable style = {styles.curateBtn}>
-              <Text style = {styles.curateText}> Curate with AI</Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Progress Indicator */}
+        <View style={styles.progressContainer}>
+          {steps.map((step, index) => (
+            <React.Fragment key={index}>
+              <View style={[styles.stepCircle, currentStep === index + 1 && styles.stepCircleActive]}>
+                <Text style={[styles.stepNumber, currentStep === index + 1 && styles.stepNumberActive]}>
+                  {index + 1}
+                </Text>
+              </View>
+              {index < steps.length - 1 && (
+                <View style={[styles.progressLine, currentStep > index + 1 && styles.progressLineActive]} />
+              )}
+            </React.Fragment>
+          ))}
+        </View>
 
-            </Pressable>
+        {/* Step Labels */}
+        <View style={styles.stepLabelsContainer}>
+          {steps.map((step, index) => (
+            <Text key={index} style={[styles.stepLabel, currentStep === index + 1 && styles.stepLabelActive]}>
+              {step}
+            </Text>
+          ))}
+        </View>
+
+        {/* Location Badge */}
+        <View style={styles.locationBadge}>
+          <Text style={styles.locationIcon}>📍</Text>
+          <Text style={styles.locationText}>Coppell, TX</Text>
+        </View>
+
+        {/* Hero Section */}
+        <View style={styles.heroSection}>
+          <View style={styles.headingContainer}>
+            <Text style={styles.headingNormal}>Discover </Text>
+            <Text style={styles.headingHighlight}>Your Community</Text>
           </View>
 
+          <Text style={styles.subheading}>
+            Connect with local resources, opportunities, and services tailored to your interests
+          </Text>
 
-        <View style={styles.container}>
+          {/* CTA Button */}
+          <TouchableOpacity style={styles.ctaButton} activeOpacity={0.8}>
+            <Text style={styles.ctaButtonText}>Begin Survey</Text>
+            <Text style={styles.ctaButtonArrow}>→</Text>
+          </TouchableOpacity>
+        </View>
 
+        {/* Info Box */}
+        <View style={styles.infoBox}>
+          <Text style={styles.infoBoxTitle}>Why this matters</Text>
+          <Text style={styles.infoBoxText}>
+            Our community thrives when everyone has access to the right resources. This personalized map helps you
+            discover opportunities that match your interests, goals, and needs — all in one place.
+          </Text>
+        </View>
 
-          <View style = {styles.space}></View>
-          <Text style = {styles.sectionText}>Available Opportunities</Text>
-          <View style = {styles.space}></View>
-          <Carousel />
+        {/* Resources Section */}
+        <Text style={styles.resourcesHeading}>Explore Resources across Coppell</Text>
+
+        <View style={styles.resourcesContainer}>
+          {RESOURCES.map((resource, index) => (
+            <TouchableOpacity
+              key={resource.id}
+              style={[styles.resourceCard, index % 2 === 1 && styles.resourceCardOffset]}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.resourceIcon}>{resource.icon}</Text>
+              <Text style={styles.resourceTitle}>{resource.title}</Text>
+              <Text style={styles.resourceDescription}>{resource.description}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </ScrollView>
-    </LinearGradient>
-  );
-}
-
-function Carousel() {
-  const scrollX = useRef(new Animated.Value(0)).current;
-  const scrollRef = useRef(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const handleScroll = (event) => {
-    const x = event.nativeEvent.contentOffset.x;
-    const idx = Math.round(x / (CARD_WIDTH + SPACING));
-    setCurrentIndex(idx);
-  };
-
-  const goToIndex = (targetIndex) => {
-    const safeIndex = Math.max(0, Math.min(events.length + 1, targetIndex));
-
-    const xOffset = safeIndex * (CARD_WIDTH + SPACING);
-
-    requestAnimationFrame(() => {
-      scrollRef.current?.scrollTo({ x: xOffset, animated: true });
-    });
-
-    setCurrentIndex(safeIndex);
-  };
-
-  const handleNext = () => goToIndex(currentIndex + 1);
-  const handleBack = () => goToIndex(currentIndex - 1);
-
-  return (
-    <View style={{ width: "100%", alignItems: "center", }}>
-
-      <Animated.ScrollView
-        ref={scrollRef}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        snapToInterval={CARD_WIDTH + SPACING}
-        decelerationRate="fast"
-        scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: false, listener: handleScroll }
-        )}
-
-        contentContainerStyle={{
-          flexDirection: "row",
-          alignItems: "center",
-
-          // 💥 THIS IS THE FIX!!
-          width: (CARD_WIDTH + SPACING) * events.length,
-          paddingHorizontal: SCREEN_W / 2,
-        }}
-      >
-        {events.map((item, i) => {
-          const inputRange = [
-            (i - 1) * (CARD_WIDTH + SPACING),
-            i * (CARD_WIDTH + SPACING),
-            (i + 1) * (CARD_WIDTH + SPACING),
-          ];
-
-          const scale = scrollX.interpolate({
-            inputRange,
-            outputRange: [0.85, 1, 0.85],
-            extrapolate: "clamp",
-          });
-
-          const opacity = scrollX.interpolate({
-            inputRange,
-            outputRange: [0.45, 1, 0.45],
-            extrapolate: "clamp",
-          });
-
-          return (
-            <Animated.View
-              key={i}
-              style={{
-                width: CARD_WIDTH,
-                marginRight: SPACING,
-                transform: [{ scale }],
-                opacity,
-              }}
-            >
-              <View style={styles.card}>
-                <Card item={item} />
-              </View>
-            </Animated.View>
-          );
-        })}
-      </Animated.ScrollView>
-
-      {/* buttons */}
-      <View style={styles.buttonsRow}>
-        <Pressable onPress={handleBack} style={styles.backBtn}>
-
-          <Text style={styles.btnText}>Back</Text>
-
-        </Pressable>
-
-        <Pressable onPress={handleNext}  style={styles.nextBtn}>
-          <View>
-            <Text style={styles.btnText}>Next</Text>
-          </View>
-        </Pressable>
-      </View>
-    </View>
-  );
-}
-
-
-
-function Card({ item }) {
-  return (
-    <View style={styles.cardInner}>
-      <View style={styles.iconHolder}>
-        <Ionicons name="person-circle-outline" size={46} color="#6B6FFF" />
-      </View>
-
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.desc}>{item.desc}</Text>
-
-      <View style={styles.row}>
-        <Ionicons name="location-outline" size={16} color="#bbb" />
-        <Text style={styles.smallText}>{item.location}</Text>
-      </View>
-
-      <View style={styles.row}>
-        <Ionicons name="time-outline" size={16} color="#bbb" />
-        <Text style={styles.smallText}>{item.time}</Text>
-      </View>
-
-      <View style={styles.row}>
-        <Ionicons name="people-outline" size={16} color="#bbb" />
-        <Text style={styles.smallText}>{item.people}</Text>
-      </View>
-
-      <View style={styles.tagsRow}>
-        {item.tags.map((t, idx) => (
-          <View key={idx} style={styles.tag}>
-            <Text style={styles.tagText}>{t}</Text>
-          </View>
-        ))}
-      </View>
-    </View>
-  );
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-  },
   container: {
     flex: 1,
-    paddingTop: 44,
-    alignItems: "center",
+    backgroundColor: "#0f0f0f",
   },
-
-  carouselWrap: {
-    width: "100%",
-    alignItems: "center",
+  scrollContent: {
+    paddingHorizontal: isSmallScreen ? 16 : 24,
+    paddingBottom: 40,
   },
-
-  card: {
-    backgroundColor: "#111216",
-    borderRadius: 20,
-    padding: 20,
+  progressContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 24,
+    marginBottom: 32,
+  },
+  stepCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#404040",
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.06)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 14 },
-    shadowOpacity: 0.22,
-    shadowRadius: 30,
-    elevation: 10,
-    overflow: Platform.OS === "web" ? ("visible" as any) : "hidden",
+    borderColor: "#505050",
   },
-
-  cardInner: {
-    width: "100%",
-    height: "100%",
-    alignItems: "flex-start",
+  stepCircleActive: {
+    backgroundColor: "#3b82f6",
+    borderColor: "#2563eb",
   },
-
-  iconHolder: {
-    alignSelf: "center",
-    marginBottom: 8,
+  stepNumber: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#999",
   },
-
-  title: {
+  stepNumberActive: {
     color: "#fff",
-    fontSize: 20,
-    fontWeight: "700",
-    textAlign: "center",
   },
-
-  desc: {
-    color: "rgba(255,255,255,0.75)",
-    marginTop: 10,
-    fontSize: 14,
-    textAlign: "center",
+  progressLine: {
+    width: isSmallScreen ? 40 : 60,
+    height: 1,
+    backgroundColor: "#404040",
+    marginHorizontal: 12,
   },
-
-  row: {
+  progressLineActive: {
+    backgroundColor: "#3b82f6",
+  },
+  stepLabelsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 40,
+    paddingHorizontal: isSmallScreen ? 0 : 20,
+  },
+  stepLabel: {
+    fontSize: 12,
+    color: "#999",
+    fontWeight: "500",
+  },
+  stepLabelActive: {
+    color: "#fff",
+  },
+  locationBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginTop: 12,
+    alignSelf: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#3b82f6",
+    marginBottom: 32,
   },
-
-  smallText: {
-    color: "rgba(255,255,255,0.78)",
-    marginLeft: 8,
+  locationIcon: {
+    fontSize: 14,
+    marginRight: 6,
   },
-
-  tagsRow: {
+  locationText: {
+    color: "#3b82f6",
+    fontSize: 13,
+    fontWeight: "500",
+  },
+  heroSection: {
+    marginBottom: 40,
+  },
+  headingContainer: {
     flexDirection: "row",
-    marginTop: 14,
-    gap: 8,
     flexWrap: "wrap",
+    justifyContent: "center",
+    marginBottom: 16,
   },
-
-  tag: {
-    backgroundColor: "#2B2D33",
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 14,
+  headingNormal: {
+    fontSize: isSmallScreen ? 36 : 48,
+    fontWeight: "700",
+    color: "#fff",
   },
-
-  tagText: {
-    color: "#9FB0FF",
-    fontSize: 12,
+  headingHighlight: {
+    fontSize: isSmallScreen ? 36 : 48,
+    fontWeight: "700",
+    color: "#3b82f6",
   },
-
-  // Big floating side arrows
-  sideArrow: {
-    position: "absolute",
-    top: "48%",
-    backgroundColor: "rgba(0,0,0,0.45)",
-    padding: 12,
-    borderRadius: 999,
-    zIndex: 60,
+  subheading: {
+    fontSize: isSmallScreen ? 14 : 16,
+    color: "#b3b3b3",
+    textAlign: "center",
+    marginBottom: 24,
+    lineHeight: 24,
+  },
+  ctaButton: {
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#3b82f6",
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: 24,
+    alignSelf: "center",
   },
-
-  buttonsRow: {
-    width: Math.min(1100, SCREEN_W * 0.8),
-    marginTop: 22,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
-  backBtn: {
-    flex: 1,
-    marginRight: 10,
-    backgroundColor: "#222",
-    padding: 14,
-    borderRadius: 16,
-    alignItems: "center",
-  },
-
-  nextBtn: {
-    flex: 1,
-    marginLeft: 10,
-    backgroundColor: "#6C7DFF",
-    padding: 14,
-    borderRadius: 16,
-    alignItems: "center",
-  },
-
-  btnText: {
+  ctaButtonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+    marginRight: 8,
   },
-
-  full: {
-
-    width: '700%',
-    alignContent:'center',
-    alignItems: 'center'
-
-  },
-  sectionText: {
+  ctaButtonArrow: {
     color: "#fff",
-    fontSize: 25,
-    fontWeight: "600",
-
+    fontSize: 18,
   },
-  space: {
-
-    padding: 30,
-
-  },
-  curateBtn: {
-    flex: 1,
-    width: '80%',
-    backgroundColor: '#3E87DB',
+  infoBox: {
+    borderWidth: 1,
+    borderColor: "#333",
     borderRadius: 16,
-    alignItems: "center",
-    height:'10%',
-    alignSelf: 'center'
+    padding: 20,
+    marginBottom: 40,
+    backgroundColor: "#1a1a1a",
   },
-
-  curateText: {
+  infoBoxTitle: {
     color: "#fff",
-    fontSize: 25,
+    fontSize: 18,
     fontWeight: "600",
+    marginBottom: 12,
   },
+  infoBoxText: {
+    color: "#b3b3b3",
+    fontSize: 14,
+    lineHeight: 22,
+  },
+  resourcesHeading: {
+    color: "#b3b3b3",
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 32,
+    fontWeight: "500",
+  },
+  resourcesContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  resourceCard: {
+    width: isSmallScreen ? "100%" : "48%",
+    backgroundColor: "#1a1a1a",
+    borderWidth: 1,
+    borderColor: "#333",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+  },
+  resourceCardOffset: {
+    marginTop: isSmallScreen ? 0 : 24,
+  },
+  resourceIcon: {
+    fontSize: 32,
+    marginBottom: 12,
+  },
+  resourceTitle: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+  resourceDescription: {
+    color: "#999",
+    fontSize: 13,
+    lineHeight: 18,
+  },
+})
 
-  curateView: {
-    flex:1,
-  }
-});
+export default App
