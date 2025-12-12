@@ -17,7 +17,9 @@ export default function RootLayout() {
   
       <Stack.Screen name = "index" options = {{headerShown: false}} />
       <Stack.Screen name = "resource/[id]" options = {{headerShown: false}} />
-      <Stack.Screen name = "search" options = {{headerShown: false}} />
+      <Stack.Screen name = "search/page" options = {{headerShown: false}} />
+      <Stack.Screen name = "survey_one" options = {{headerShown: false}} />
+      <Stack.Screen name = "survey_two" options = {{headerShown: false}} />
 
     </Stack>
   );

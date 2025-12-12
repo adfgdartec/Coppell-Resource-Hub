@@ -1,63 +1,93 @@
-"use client"
-
-import React, { useState } from "react"
-import { View, Text, ScrollView, TouchableOpacity, Dimensions, StyleSheet, SafeAreaView } from "react-native"
+import React, { useState } from "react";
+import { Dimensions, SafeAreaView, ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 import { router } from 'expo-router';
 
 const { width, height } = Dimensions.get("window")
 const isSmallScreen = width < 500
 
-const RESOURCES = [
+const Question1 = [
   {
-    id: 1,
-    title: "Job Opportunities",
-    description: "Find local career openings and professional development",
-    icon: "",
+    id:1,
+    title: "Volunteering",
   },
   {
-    id: 2,
-    title: "Education & Training",
-    description: "Access courses, workshops, and skill-building programs",
-    icon: "",
+    id:2,
+    title: "Clubs",
   },
   {
-    id: 3,
-    title: "Community Events",
-    description: "Discover local events, meetups, and social gatherings",
-    icon: "",
+    id:3,
+    title: "Courses",
   },
   {
-    id: 4,
-    title: "Health & Wellness",
-    description: "Find fitness, mental health, and medical services nearby",
-    icon: "",
+    id:4,
+    title: "Events",
   },
   {
-    id: 5,
-    title: "Business Support",
-    description: "Connect with local entrepreneurs and business resources",
-    icon: "🚀",
+    id:5,
+    title: "Certifications",
+  },
+]
+
+const Question2 = [
+  {
+    id:6,
+    title: "STEM",
   },
   {
-    id: 6,
-    title: "Community Groups",
-    description: "Join clubs, hobby groups, and community organizations",
-    icon: "👥",
+    id:7,
+    title: "Art",
+  },
+  {
+    id:8,
+    title: "Sports",
+  },
+  {
+    id:9,
+    title: "Business",
+  },
+  {
+    id:10,
+    title: "Community Work",
+  },
+  {
+    id:11,
+    title: "Leadership",
   },
 ]
 
 
 
+
 const App = () => {
-  const [currentStep, setCurrentStep] = useState(1)
+  const [currentStep, setCurrentStep] = useState(2)
 
   const steps = ["Welcome", "Preferences", "Rate"]
+  
+
+  const [selected, setSelected] = useState([]);
+
+  const toggleSelect = (id) => {
+    setSelected((prev) => 
+      prev.includes(id)
+        ? prev.filter((x) => x !== id)
+        : [...prev, id]
+    );
+  };
+  const pickedFromQ1 = selected.some(id => id >= 1 && id <= 5);
+  const pickedFromQ2 = selected.some(id => id >= 6 && id <= 11);
+  
+  const canGoNext = pickedFromQ1 && pickedFromQ2;
+  
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        
         {/* Progress Indicator */}
         <View style={styles.progressContainer}>
+
+
+
           {steps.map((step, index) => (
             <React.Fragment key={index}>
               <View style={[styles.stepCircle, currentStep === index + 1 && styles.stepCircleActive]}>
@@ -80,56 +110,77 @@ const App = () => {
             </Text>
           ))}
         </View>
+        
 
-        {/* Location Badge */}
-        <View style={styles.locationBadge}>
-          <Text style={styles.locationIcon}>📍</Text>
-          <Text style={styles.locationText}>Coppell, TX</Text>
-        </View>
 
-        {/* Hero Section */}
-        <View style={styles.heroSection}>
-          <View style={styles.headingContainer}>
-            <Text style={styles.headingNormal}>Discover </Text>
-            <Text style={styles.headingHighlight}>Your Community</Text>
-          </View>
 
-          <Text style={styles.subheading}>
-            Connect with local resources, opportunities, and services tailored to your interests
-          </Text>
-
-          {/* CTA Button */}
-          <TouchableOpacity style={styles.ctaButton} activeOpacity={0.8}  onPress={() => router.push('/survey_one')}>
-            <Text style={styles.ctaButtonText}>Begin Survey</Text>
-            <Text style={styles.ctaButtonArrow}>→</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Info Box */}
         <View style={styles.infoBox}>
-          <Text style={styles.infoBoxTitle}>Why this matters</Text>
-          <Text style={styles.infoBoxText}>
-            Our community thrives when everyone has access to the right resources. This personalized map helps you
-            discover opportunities that match your interests, goals, and needs — all in one place.
-          </Text>
+          <Text style={styles.infoBoxTitle}>What achievements are you seeking?</Text>
+          <View style={styles.interestsContainer}>
+            {Question1.map((item) => (
+              <Pressable
+                key={item.id}
+                onPress={() => toggleSelect(item.id)}
+                style={[
+                  styles.interestChip,
+                  selected.includes(item.id) && styles.interestChipSelected
+                ]}
+              >
+                <Text style={styles.interestChipText}>{item.title}</Text>
+              </Pressable>
+            ))}
+          </View>
         </View>
 
-        {/* Resources Section */}
-        <Text style={styles.resourcesHeading}>Explore Resources across Coppell</Text>
 
-        <View style={styles.resourcesContainer}>
-          {RESOURCES.map((resource, index) => (
-            <TouchableOpacity
-              key={resource.id}
-              style={[styles.resourceCard, index % 2 === 1 && styles.resourceCardOffset]}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.resourceIcon}>{resource.icon}</Text>
-              <Text style={styles.resourceTitle}>{resource.title}</Text>
-              <Text style={styles.resourceDescription}>{resource.description}</Text>
-            </TouchableOpacity>
-          ))}
+        <View style={styles.infoBox}>
+          <Text style={styles.infoBoxTitle}>Your Interests?</Text>
+
+          <View style={styles.interestsContainer}>
+            {Question2.map((item) => (
+              <Pressable
+                key={item.id}
+                onPress={() => toggleSelect(item.id)}
+                style={[
+                  styles.interestChip,
+                  selected.includes(item.id) && styles.interestChipSelected
+                ]}
+              >
+                <Text style={styles.interestChipText}>{item.title}</Text>
+              </Pressable>
+            ))}
+          </View>
         </View>
+
+        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20 }}>
+  
+          {/* Back Button */}
+          <Pressable
+            onPress={() => router.back()}
+            style={styles.backButton}
+          >
+            <Text style={styles.backButtonText}>← Back</Text>
+          </Pressable>
+
+          {/* Next Button */}
+          <Pressable
+            onPress={() => {
+              if (canGoNext) router.push('/survey_two');
+            }}
+            style={[
+              styles.nextButton,
+              !canGoNext && { opacity: 0.4 }
+            ]}
+          >
+            <Text style={styles.nextButtonText}>Next →</Text>
+          </Pressable>
+
+        </View>
+
+
+
+
+
       </ScrollView>
     </SafeAreaView>
   )
@@ -137,12 +188,17 @@ const App = () => {
 
 const styles = StyleSheet.create({
   container: {
+
     flex: 1,
     backgroundColor: "#0f0f0f",
+
   },
   scrollContent: {
     paddingHorizontal: isSmallScreen ? 16 : 24,
     paddingBottom: 40,
+    marginLeft: '15%',
+    marginRight:'15%'
+
   },
   progressContainer: {
     flexDirection: "row",
@@ -186,7 +242,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     marginBottom: 40,
-    paddingHorizontal: isSmallScreen ? 0 : 20,
+    paddingHorizontal: isSmallScreen ? 10 : 20,
   },
   stepLabel: {
     fontSize: 12,
@@ -320,6 +376,56 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
   },
+
+  interestsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+    marginTop: 20,
+  },
+  interestChip: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    backgroundColor: "#1a1a1a",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#333",
+    marginRight: 10,
+    marginBottom: 10,
+  },
+  interestChipSelected: {
+    backgroundColor: "#3b82f6",
+    borderColor: "#2563eb",
+  },
+  interestChipText: {
+    color: "#fff",
+    fontSize: 14,
+  },
+
+  backButton: {
+    padding: 10,
+  },
+
+  nextButton: {
+    backgroundColor: "#4F95E6",
+    borderRadius: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  
+  
+  backButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+  },
+
+  nextButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  
 })
 
 export default App
