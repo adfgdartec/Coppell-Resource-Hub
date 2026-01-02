@@ -20,7 +20,7 @@ try {
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window")
 const CARD_WIDTH = Math.min(920, Math.max(360, SCREEN_W * 0.58))
 const CARD_HEIGHT = Math.min(520, Math.max(260, SCREEN_H * 0.56))
-const SPACING = 10
+//const SPACING = 10
 const MAP_HEIGHT = Math.min(450, SCREEN_H * 0.4)
 const isSmallScreen = SCREEN_W < 360
 
